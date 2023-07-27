@@ -1,5 +1,4 @@
 mod cache_types;
-mod cache_storage;
 mod simple_cache;
 mod hash_cache;
 

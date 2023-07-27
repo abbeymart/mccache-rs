@@ -1,5 +1,5 @@
 use crate::cache_types::*;
-use crate::cache_storage::*;
+// use crate::cache_storage::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub unsafe fn set_hash_cache<T>(key: String, hash: String, value: T, expire: u128) -> CacheResponseType<T> {
@@ -16,21 +16,28 @@ pub unsafe fn set_hash_cache<T>(key: String, hash: String, value: T, expire: u12
     if expire == 0 {
         cache_expire = 300;
     }
-    let current_time_in_milli_seconds = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_millis();
+    // current time in millisecond to set cache expiry time
+    let mut current_time_in_milli_seconds: u128 = 0;
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Some(val) => {
+            current_time_in_milli_seconds = val.as_millis();
+        }
+        _ => {
+            let msg: String = format!("unable to set cache value - error setting current time for cache-expiration");
+            CacheResponseType{ok: true, message: msg, value: () }
+        }
+    }
     // TODO: review unsafe variable | e.g. use storage singleton
     // compute secure cache-key and hash-key
     let hash_key = format!("{}{}", hash, KEY_CODE);
     let cache_key = format!("{}{}", key, KEY_CODE);
-    let mut hash_value: HashCacheValueType<T> = HashCacheValueType::new();
+    let mut hash_cache_value: HashCacheValueType<T> = HashCacheValueType::new();
     let cache_key_clone = cache_key.clone();
     let hash_key_clone = hash_key.clone();
     // let val = value.clone();
     let cache_value = CacheValueType{value, expire: cache_expire * 1000 + current_time_in_milli_seconds };
-    hash_value.insert(hash_key_clone, cache_value);
-    MC_HASH_CACHE.insert(cache_key_clone, hash_value);
+    hash_cache_value.insert(cache_key_clone_key_clone, cache_value);
+    MC_HASH_CACHE.insert(hash_key_clone, hash_cache_value);
     // validate value caching
     match MC_HASH_CACHE.get(&cache_key) {
         Some(val) => {
@@ -56,11 +63,17 @@ pub unsafe fn get_hash_cache<T>(key: String, hash: String) -> CacheResponseType<
     // compute secure cache-key
     let hash_key = format!("{}{}", hash, KEY_CODE);
     let cache_key = format!("{}{}", key, KEY_CODE);
-    // let cache_key_clone = cache_key.clone();
-    let current_time_in_milli_seconds = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_millis();
+    // current time in millisecond to set cache expiry time
+    let mut current_time_in_milli_seconds: u128 = 0;
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Some(val) => {
+            current_time_in_milli_seconds = val.as_millis();
+        }
+        _ => {
+            let msg: String = format!("unable to set cache value - error setting current time for cache-expiration");
+            CacheResponseType{ok: true, message: msg, value: () }
+        }
+    }
 
     match MC_HASH_CACHE.get(&hash_key) {
         Some(kVal) => match kVal.get(&cache_key) {
@@ -97,14 +110,14 @@ pub unsafe fn get_hash_cache<T>(key: String, hash: String) -> CacheResponseType<
 
 pub unsafe fn delete_hash_cache<T>(key: String, hash: String, by: String) -> CacheResponseType<T> {
     // validate required params
-    if key == "" || hash == "" || value == None {
+    if key == "" || hash == "" {
         return CacheResponseType{
             ok: false,
-            message: "hash, cache-key and value are required".to_string(),
+            message: "hash and cache-key are required".to_string(),
             value: ()
         }
     }
-    let mut del_by = "hash".to_string();
+    let mut del_by = "key".to_string();
     if by != "key" {
         del_by = by.to_string();
     }
@@ -127,7 +140,7 @@ pub unsafe fn delete_hash_cache<T>(key: String, hash: String, by: String) -> Cac
     let cache_key = format!("{}{}", key, KEY_CODE);
 
     if del_by == "hash" {
-        match MC_HASH_CACHE.remove(&cache_key) {
+        match MC_HASH_CACHE.remove(&hash_key) {
             Some(val) => {
                 let msg: String = format!("task completed successfully");
                 CacheResponseType{ok: true, message: msg, value: val }
@@ -148,7 +161,7 @@ pub unsafe fn delete_hash_cache<T>(key: String, hash: String, by: String) -> Cac
                         CacheResponseType{ok: true, message: msg, value: val }
                     },
                     None => {
-                        let msg: String = format!("task not completed, hash-value not found");
+                        let msg: String = format!("task not completed, hash-cache-value not found");
                         CacheResponseType{ok: true, message: msg, value: () }
                     }
                 }
@@ -160,7 +173,7 @@ pub unsafe fn delete_hash_cache<T>(key: String, hash: String, by: String) -> Cac
         }
     }
 
-    let msg: String = format!("testing");
+    let msg: String = format!("invalid-by-params[key or hash]");
     CacheResponseType{ok: true, message: msg, value: nil}
 }
 
