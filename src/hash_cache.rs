@@ -1,6 +1,8 @@
 use crate::cache_types::*;
-// use crate::cache_storage::*;
 use std::time::{SystemTime, UNIX_EPOCH};
+
+// Initialise hash-cache object/dictionary (map)
+pub static mut MC_HASH_CACHE: HashCache<T> = HashCache::new();
 
 pub unsafe fn set_hash_cache<T>(key: String, hash: String, value: T, expire: u128) -> CacheResponseType<T> {
     // validate required params

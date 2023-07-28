@@ -1,6 +1,8 @@
 use crate::cache_types::*;
-// use crate::cache_storage::*;
 use std::time::{SystemTime, UNIX_EPOCH};
+
+// Initialise simple-cache object/dictionary (map)
+pub static mut MC_SIMPLE_CACHE: SimpleCache<T> = SimpleCache::new();
 
 pub unsafe fn set_cache<T>(key: String, value: T, expire: u128) -> CacheResponseType<T> {
     // validate required params
