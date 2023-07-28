@@ -7,16 +7,13 @@
 
 ## API - Simple Cache
 
-- Simple Cache is key-value caching for number, string and object values
-- It exposes the following functions: setCache, getCache, deleteCache and
-  clearCache
+- Simple Cache: key-value caching for rust-lang supported generic types - e.g. number, string and object values
+- It exposes the following functions: set_cache, get_cache, delete_cache and clear_cache
 
 ## API - Hash Cache
 
-- Hash Cache: hash-key-value storage for caching number, string and object
-  values
-- It exposes the following functions: setHashCache, getHashCache,
-  deleteHashCache and clearHashCache
+- Hash Cache: hash-key-value storage for caching for rust-lang supported generic types - e.g. number, string and object values
+- It exposes the following functions: set_hash_cache, get_hash_cache, delete_hash_cache and clear_hash_cache
 
 ## Usage
 

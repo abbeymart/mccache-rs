@@ -184,3 +184,4 @@ pub unsafe fn clear_hash_cache<T>() -> CacheResponseType<T> {
     let msg: String = format!("task completed successfully");
     CacheResponseType{ok: true, message: msg, value: ()}
 }
+
