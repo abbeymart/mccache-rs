@@ -2,7 +2,7 @@ use std::sync::Mutex;
 use crate::cache_types::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Initialise simple-cache object/dictionary (map)
+// Initialise shared simple-cache object/dictionary (map)
 pub static mut MC_SIMPLE_CACHE: Mutex<SimpleCache<T>> = Mutex::new(SimpleCache::new());
 
 pub unsafe fn set_cache<T>(key: String, value: T, expire: u128) -> CacheResponseType<T> {

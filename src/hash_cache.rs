@@ -2,7 +2,7 @@ use std::sync::Mutex;
 use crate::cache_types::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Initialise hash-cache object/dictionary (map)
+// Initialise shared hash-cache object/dictionary (map)
 pub static mut MC_HASH_CACHE: Mutex<HashCache<T>> = Mutex::new(HashCache::new());
 
 pub unsafe fn set_hash_cache<T>(key: String, hash: String, value: T, expire: u128) -> CacheResponseType<T> {
@@ -232,4 +232,3 @@ pub unsafe fn clear_hash_cache<T>() -> CacheResponseType<T> {
         }
     }
 }
-
